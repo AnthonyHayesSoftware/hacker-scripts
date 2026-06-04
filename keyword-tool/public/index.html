@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Keyword Ideas — Free Content & SEO Idea Generator</title>
+  <meta name="description" content="Free keyword idea generator powered by Google Suggest. Find questions, prepositions and long-tail keywords, export to Excel, and send a content brief straight to Claude." />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- SheetJS for true .xlsx export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div class="brand">🔎 Keyword Ideas</div>
+      <div class="tagline">Free content marketing &amp; SEO idea generator</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Get content &amp; SEO ideas for any topic</h1>
+      <p class="sub">
+        Enter a seed keyword and we'll pull real searches people type into Google —
+        grouped into questions, comparisons and long-tail phrases. Export to Excel,
+        or send a ready-made content brief straight to your Claude Project.
+      </p>
+
+      <form id="search-form" class="search-bar" autocomplete="off">
+        <input id="seed" name="seed" type="text" placeholder="e.g. cold plunge benefits" required maxlength="80" />
+        <select id="gl" name="gl" title="Country">
+          <option value="">🌐 Any country</option>
+          <option value="us">United States</option>
+          <option value="gb">United Kingdom</option>
+          <option value="ca">Canada</option>
+          <option value="au">Australia</option>
+          <option value="ie">Ireland</option>
+          <option value="in">India</option>
+        </select>
+        <select id="hl" name="hl" title="Language">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="it">Italian</option>
+        </select>
+        <button type="submit" id="go">Get ideas</button>
+      </form>
+      <p class="hint">Tip: short, broad seeds return the most ideas. Try a topic, not a full sentence.</p>
+    </section>
+
+    <section id="status" class="status" hidden></section>
+
+    <section id="toolbar" class="toolbar" hidden>
+      <div class="meta">
+        <strong id="result-count">0</strong> ideas for
+        <span id="result-seed" class="chip"></span>
+        <span id="cached-flag" class="cached" hidden>· cached</span>
+      </div>
+      <div class="actions">
+        <span id="selected-count" class="selected-count">0 selected</span>
+        <button class="btn ghost" data-act="select-all">Select all</button>
+        <button class="btn ghost" data-act="clear">Clear</button>
+        <button class="btn" data-act="copy">Copy</button>
+        <button class="btn" data-act="csv">CSV</button>
+        <button class="btn" data-act="xlsx">Excel</button>
+        <button class="btn claude" data-act="claude">✦ Send to Claude Project</button>
+      </div>
+    </section>
+
+    <section id="results" class="results"></section>
+  </main>
+
+  <!-- Send-to-Claude options dialog -->
+  <dialog id="claude-dialog">
+    <form method="dialog">
+      <h2>✦ Send to your Claude Project</h2>
+      <p class="dialog-sub">
+        We'll build a content brief from your selected keywords. Open it in a new
+        Claude chat (paste into your Project), or copy it to do it yourself.
+      </p>
+      <label class="field">
+        <span>Primary / focus keyword</span>
+        <input id="claude-focus" type="text" placeholder="The main keyword this article should target" />
+      </label>
+      <textarea id="claude-preview" rows="10" readonly></textarea>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn" id="claude-copy" type="button">Copy brief</button>
+        <button class="btn claude" id="claude-open" type="button">Open in Claude →</button>
+      </div>
+      <p class="dialog-note">
+        First time? Set up a Claude Project once (custom instructions + your SEO
+        scoring rubric as knowledge files) so every brief turns into an optimised,
+        scored article — for both traditional SEO and AI search.
+      </p>
+    </form>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Ideas come from Google's public Suggest endpoint. This is a free tool — no login required.</p>
+    </div>
+  </footer>
+</body>
+</html>
