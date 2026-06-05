@@ -1,4 +1,5 @@
-"use strict";
+import { clusterKeywords } from "./cluster.js";
+import { buildAdGroups, adGroupsToGoogleCSV } from "./stag.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -7,7 +8,8 @@ const statusEl = $("#status");
 const toolbar = $("#toolbar");
 const resultsEl = $("#results");
 
-let lastData = null; // most recent API payload
+let lastData = null;     // most recent API payload
+let lastClusters = [];   // clusterKeywords() output for the current results
 
 /* ------------------------------------------------------------------ *
  *  Search
@@ -59,6 +61,7 @@ function render(data) {
   if (data.total === 0) {
     setStatus("No suggestions came back — try a broader seed, or a different country/language.", true);
     toolbar.hidden = true;
+    $("#views").hidden = true;
     return;
   }
 
@@ -76,7 +79,86 @@ function render(data) {
     resultsEl.appendChild(card);
   }
   updateSelectedCount();
+
+  // Build the clustered + ad-group views from the full flat keyword list.
+  const allKw = Object.values(data.buckets).flat();
+  lastClusters = clusterKeywords(allKw, data.seed);
+  renderClusters();
+  renderAdGroups();
+  $("#views").hidden = false;
+  switchView("ideas");
 }
+
+/* ------------------------------------------------------------------ *
+ *  View switching (Ideas / Clusters / Ad Groups)
+ * ------------------------------------------------------------------ */
+function switchView(view) {
+  document.querySelectorAll(".view-tab").forEach((t) => t.classList.toggle("active", t.dataset.view === view));
+  document.querySelectorAll(".view").forEach((s) => (s.hidden = s.dataset.view !== view));
+  // The select/export toolbar only applies to the Ideas view.
+  toolbar.hidden = view !== "ideas";
+}
+$("#views").addEventListener("click", (e) => {
+  if (e.target.dataset.view) switchView(e.target.dataset.view);
+});
+
+/* ------------------------------------------------------------------ *
+ *  Clusters view
+ * ------------------------------------------------------------------ */
+function renderClusters() {
+  const el = $("#clusters");
+  el.innerHTML = "";
+  for (const c of lastClusters) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${escapeHtml(c.label)} <span class="count">${c.keywords.length}</span></h3>
+      <ul>${c.keywords.map((s) => `<li><label><span>${escapeHtml(s)}</span></label></li>`).join("")}</ul>
+      <div style="padding:8px 10px;border-top:1px solid var(--border)">
+        <button class="btn claude" data-cluster="${escapeHtml(c.label)}" style="width:100%">✦ Send this cluster to Claude</button>
+      </div>`;
+    el.appendChild(card);
+  }
+}
+$("#clusters").addEventListener("click", (e) => {
+  const label = e.target.dataset.cluster;
+  if (!label) return;
+  const c = lastClusters.find((x) => x.label === label);
+  if (c) openClaudeDialog(c.keywords, label === "Core / head terms" ? lastData.seed : label);
+});
+
+/* ------------------------------------------------------------------ *
+ *  Ad Groups view (STAG)
+ * ------------------------------------------------------------------ */
+function selectedMatchTypes() {
+  return [...document.querySelectorAll(".mt:checked")].map((c) => c.value);
+}
+function currentAdGroups() {
+  return buildAdGroups(lastClusters, { campaign: $("#stag-campaign").value.trim() || "Search Campaign" });
+}
+function renderAdGroups() {
+  const el = $("#adgroups-list");
+  el.innerHTML = "";
+  for (const ag of currentAdGroups()) {
+    const card = document.createElement("div");
+    card.className = "adgroup";
+    const heads = ag.headlines
+      .map((h) => `<code class="${h.overLimit ? "over" : ""}" title="${h.overLimit ? "Over 30 chars — trim it" : ""}">${escapeHtml(h.text)}</code>`)
+      .join("");
+    card.innerHTML = `
+      <h3>${escapeHtml(ag.adGroup)} <span class="count">${ag.keywords.length} kw</span></h3>
+      <div class="headlines"><div>Starter headlines:</div>${heads}</div>
+      <ul>${ag.keywords.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>`;
+    el.appendChild(card);
+  }
+}
+$("#stag-campaign").addEventListener("input", renderAdGroups);
+$("#stag-export").addEventListener("click", () => {
+  const mts = selectedMatchTypes();
+  if (!mts.length) return alert("Pick at least one match type.");
+  const csv = adGroupsToGoogleCSV(currentAdGroups(), mts);
+  triggerDownload(new Blob([csv], { type: "text/csv;charset=utf-8" }), `${slug(lastData.seed)}-adgroups.csv`);
+});
 
 function liFor(suggestion, bucket) {
   return `<li><label>
@@ -167,18 +249,24 @@ function downloadXLSX() {
  * ------------------------------------------------------------------ */
 const dialog = $("#claude-dialog");
 
-function openClaudeDialog() {
-  const kws = selectedKeywords();
-  const chosen = kws.length ? kws : allKeywords();
+function openClaudeDialog(keywords, focus) {
+  // Called with explicit args from a cluster, or with none from the toolbar
+  // (then it uses the current selection, falling back to everything).
+  let chosen = keywords;
+  if (!chosen) {
+    const kws = selectedKeywords();
+    chosen = kws.length ? kws : allKeywords();
+  }
   if (!chosen.length) {
     alert("No keywords to send yet — run a search first.");
     return;
   }
-  $("#claude-focus").value = lastData.seed;
-  $("#claude-preview").value = buildBrief(lastData.seed, chosen);
+  const focusKw = focus || lastData.seed;
+  $("#claude-focus").value = focusKw;
+  $("#claude-preview").value = buildBrief(focusKw, chosen);
   // Rebuild the brief if the user edits the focus keyword.
   $("#claude-focus").oninput = () => {
-    $("#claude-preview").value = buildBrief($("#claude-focus").value.trim() || lastData.seed, chosen);
+    $("#claude-preview").value = buildBrief($("#claude-focus").value.trim() || focusKw, chosen);
   };
   dialog.showModal();
 }
@@ -212,6 +300,42 @@ $("#claude-open").addEventListener("click", () => {
 $("#claude-copy").addEventListener("click", () => {
   copyText($("#claude-preview").value);
   flash($("#claude-copy"), "Copied!");
+});
+
+/* ------------------------------------------------------------------ *
+ *  Claude Project starter bundle
+ *  Fetches the static starter files and zips them in-browser so the
+ *  user can drop them straight into a new Claude Project.
+ * ------------------------------------------------------------------ */
+const STARTER_FILES = [
+  "claude-project-starter/README.md",
+  "claude-project-starter/project-instructions.md",
+  "claude-project-starter/knowledge/seo-scoring-rubric.md",
+  "claude-project-starter/knowledge/ai-search-geo-aeo-rubric.md",
+  "claude-project-starter/knowledge/brand-voice-template.md",
+  "claude-project-starter/knowledge/content-brief-template.md",
+];
+
+$("#starter-btn").addEventListener("click", async (e) => {
+  if (typeof JSZip === "undefined") {
+    alert("Zip library is still loading — try again in a second.");
+    return;
+  }
+  flash(e.target, "Building…");
+  try {
+    const zip = new JSZip();
+    await Promise.all(
+      STARTER_FILES.map(async (path) => {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error(`Missing ${path}`);
+        zip.file(path.replace(/^claude-project-starter\//, ""), await res.text());
+      })
+    );
+    const blob = await zip.generateAsync({ type: "blob" });
+    triggerDownload(blob, "claude-project-starter.zip");
+  } catch (err) {
+    alert(`Could not build the bundle: ${err.message}`);
+  }
 });
 
 /* ------------------------------------------------------------------ *

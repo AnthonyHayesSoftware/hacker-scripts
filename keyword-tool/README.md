@@ -11,9 +11,15 @@ results, and lets you:
   and open it in a new Claude chat (or copy/paste), ready to become a fully
   optimised, *scored* article (traditional SEO **and** AI search).
 
-This is the **free MVP**. The architecture leaves clear seams for the paid
-features (semantic clustering, SERP-overlap clusters, search volume/difficulty,
-STAG ad-group builder, keyword cannibalization).
+Now includes, all free and client-side (zero API cost):
+- **Keyword clustering** — groups suggestions into themed clusters.
+- **STAG ad-group builder** — turns clusters into single-theme ad groups with
+  match types and starter headlines, exportable as a Google Ads Editor CSV.
+- **Claude Project starter** — a one-click downloadable kit (instructions +
+  SEO/GEO scoring rubrics + brief template) to set up your Claude Project.
+
+The architecture leaves clear seams for the paid features (embeddings-based
+clustering, SERP-overlap clusters, search volume/difficulty, cannibalization).
 
 ## Run locally
 
@@ -70,11 +76,20 @@ own Project (runs on your Claude subscription, not an API bill).
 
 ## Roadmap (paid / pro seams already in place)
 
-| Feature | Data source | Tier |
-|---|---|---|
-| Suggest scraping, exports, Claude brief | Free / your infra | Free |
-| Semantic keyword **clustering** | Embeddings (your infra) | Free/Pro |
-| **STAG** themed ad-group builder | Cluster output | Free/Pro |
-| SERP-overlap clustering, competitor keywords | SERP API ($) | Pro |
-| Search **volume** / difficulty / CPC | DataForSEO etc. ($) | Pro |
-| Keyword **cannibalization** | Google Search Console API (free) | Pro |
+| Feature | Data source | Tier | Status |
+|---|---|---|---|
+| Suggest scraping, exports, Claude brief | Free / your infra | Free | ✅ Done |
+| Keyword **clustering** (lexical) | Client-side, no API | Free | ✅ Done |
+| **STAG** themed ad-group builder + Google Ads CSV | Cluster output | Free | ✅ Done |
+| Claude **Project starter** kit download | Static bundle | Free | ✅ Done |
+| Embeddings-based semantic clustering | Embeddings API ($) | Pro | Seam ready |
+| SERP-overlap clustering, competitor keywords | SERP API ($) | Pro | Planned |
+| Search **volume** / difficulty / CPC | DataForSEO etc. ($) | Pro | Planned |
+| Keyword **cannibalization** | Google Search Console API (free) | Pro | Planned |
+
+### Code map for the new features
+- `public/cluster.js` — `clusterKeywords(keywords, seed)`; swap this one file
+  for an embeddings call to upgrade to true semantic clustering.
+- `public/stag.js` — `buildAdGroups()` + `adGroupsToGoogleCSV()`.
+- `public/claude-project-starter/` — the downloadable kit (also browseable in
+  the repo); the in-app button zips it client-side with JSZip.

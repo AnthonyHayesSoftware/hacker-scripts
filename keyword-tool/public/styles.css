@@ -29,6 +29,7 @@ body {
 .site-header .wrap { display: flex; align-items: baseline; gap: 14px; padding: 16px 0; }
 .brand { font-weight: 700; font-size: 20px; }
 .tagline { color: var(--muted); font-size: 14px; }
+.header-btn { margin-left: auto; align-self: center; }
 
 .hero { padding: 44px 0 12px; text-align: center; }
 .hero h1 { font-size: clamp(26px, 4vw, 40px); margin: 0 0 12px; }
@@ -91,10 +92,44 @@ body {
 .btn.claude { background: var(--claude); border-color: var(--claude); color: #fff; font-weight: 600; }
 .btn.claude:hover { filter: brightness(1.08); }
 
+.views {
+  display: flex; gap: 6px; margin: 4px 0 18px; border-bottom: 1px solid var(--border);
+}
+.view-tab {
+  background: transparent; border: 0; color: var(--muted); cursor: pointer;
+  padding: 10px 16px; font-size: 15px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.view-tab:hover { color: var(--text); }
+.view-tab.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+
 .results {
   display: grid; gap: 16px;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
+
+/* STAG / ad groups */
+.stag-controls {
+  display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; margin-bottom: 16px;
+}
+.field.inline { margin: 0; }
+.field.inline input { width: 260px; }
+.match-types { display: flex; gap: 12px; align-items: center; color: var(--muted); font-size: 14px; }
+.match-types label { color: var(--text); display: flex; gap: 5px; align-items: center; }
+.match-types input { accent-color: var(--accent); }
+#adgroups-list { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.adgroup { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.adgroup h3 {
+  margin: 0; padding: 12px 14px; font-size: 15px; background: var(--panel-2);
+  border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+}
+.adgroup h3 .btn.claude { padding: 5px 10px; font-size: 12px; }
+.adgroup .headlines { padding: 10px 14px; border-bottom: 1px dashed var(--border); font-size: 13px; color: var(--muted); }
+.adgroup .headlines code { color: var(--text); background: var(--panel-2); padding: 1px 6px; border-radius: 4px; margin: 2px 4px 2px 0; display: inline-block; }
+.adgroup .headlines code.over { color: #fca5a5; }
+.adgroup ul { list-style: none; margin: 0; padding: 8px 14px; max-height: 260px; overflow: auto; }
+.adgroup li { padding: 4px 0; font-size: 14px; }
 .card {
   background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
   overflow: hidden; display: flex; flex-direction: column;

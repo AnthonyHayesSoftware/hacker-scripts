@@ -6,15 +6,17 @@
   <title>Keyword Ideas — Free Content & SEO Idea Generator</title>
   <meta name="description" content="Free keyword idea generator powered by Google Suggest. Find questions, prepositions and long-tail keywords, export to Excel, and send a content brief straight to Claude." />
   <link rel="stylesheet" href="styles.css" />
-  <!-- SheetJS for true .xlsx export -->
+  <!-- SheetJS for true .xlsx export, JSZip for the Claude Project starter bundle -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+  <script src="app.js" type="module"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="wrap">
       <div class="brand">🔎 Keyword Ideas</div>
       <div class="tagline">Free content marketing &amp; SEO idea generator</div>
+      <button id="starter-btn" class="btn ghost header-btn" title="Download a ready-to-use Claude Project setup">✦ Claude Project starter</button>
     </div>
   </header>
 
@@ -70,7 +72,35 @@
       </div>
     </section>
 
-    <section id="results" class="results"></section>
+    <nav id="views" class="views" hidden>
+      <button class="view-tab active" data-view="ideas">Ideas</button>
+      <button class="view-tab" data-view="clusters">Clusters</button>
+      <button class="view-tab" data-view="adgroups">Ad Groups (STAG)</button>
+    </nav>
+
+    <!-- Ideas view (grouped Suggest results) -->
+    <section id="results" class="results view" data-view="ideas"></section>
+
+    <!-- Clusters view (semantic-ish themed grouping) -->
+    <section id="clusters" class="results view" data-view="clusters" hidden></section>
+
+    <!-- Ad Groups view (STAG builder) -->
+    <section id="adgroups" class="view" data-view="adgroups" hidden>
+      <div class="stag-controls">
+        <label class="field inline">
+          <span>Campaign name</span>
+          <input id="stag-campaign" type="text" placeholder="e.g. Cold Plunge – Search" />
+        </label>
+        <div class="match-types">
+          <span>Match types:</span>
+          <label><input type="checkbox" class="mt" value="broad" /> Broad</label>
+          <label><input type="checkbox" class="mt" value="phrase" checked /> Phrase</label>
+          <label><input type="checkbox" class="mt" value="exact" checked /> Exact</label>
+        </div>
+        <button id="stag-export" class="btn">Export Google Ads CSV</button>
+      </div>
+      <div id="adgroups-list"></div>
+    </section>
   </main>
 
   <!-- Send-to-Claude options dialog -->
