@@ -97,8 +97,21 @@
           <label><input type="checkbox" class="mt" value="phrase" checked /> Phrase</label>
           <label><input type="checkbox" class="mt" value="exact" checked /> Exact</label>
         </div>
-        <button id="stag-export" class="btn">Export Google Ads CSV</button>
+        <label class="field inline">
+          <span>Platform</span>
+          <select id="stag-platform">
+            <option value="google">Google Ads</option>
+            <option value="microsoft">Microsoft Ads</option>
+          </select>
+        </label>
+        <button id="stag-export" class="btn">Export ad groups CSV</button>
       </div>
+      <p class="hint" style="text-align:left;margin:0 0 16px">
+        Import the Google file in Google Ads Editor; the Microsoft file at
+        Microsoft Advertising → Import → Bulk (everything imports <strong>Paused</strong> so
+        nothing spends until you review). The same themed structure also works for
+        Amazon &amp; Apple Search Ads, and as asset groups for Performance Max.
+      </p>
       <div id="adgroups-list"></div>
     </section>
   </main>

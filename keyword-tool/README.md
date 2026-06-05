@@ -14,7 +14,9 @@ results, and lets you:
 Now includes, all free and client-side (zero API cost):
 - **Keyword clustering** — groups suggestions into themed clusters.
 - **STAG ad-group builder** — turns clusters into single-theme ad groups with
-  match types and starter headlines, exportable as a Google Ads Editor CSV.
+  match types and starter headlines, exportable as a **Google Ads** *or*
+  **Microsoft Ads** bulk CSV. The same themed structure also fits Amazon &
+  Apple Search Ads and Performance Max asset groups.
 - **Claude Project starter** — a one-click downloadable kit (instructions +
   SEO/GEO scoring rubrics + brief template) to set up your Claude Project.
 
@@ -45,6 +47,9 @@ throttled by Google.
     exactly why this needs a tiny server — hence Railway, not a single HTML file.
 - **`public/`** — the UI. `app.js` handles search, selection, exports and the
   Send-to-Claude brief builder.
+
+> **Non-developer? See [`DEPLOY.md`](./DEPLOY.md)** for a click-by-click,
+> no-code checklist. The quick version is below.
 
 ## Deploy to Railway (on a subdomain)
 
@@ -80,7 +85,7 @@ own Project (runs on your Claude subscription, not an API bill).
 |---|---|---|---|
 | Suggest scraping, exports, Claude brief | Free / your infra | Free | ✅ Done |
 | Keyword **clustering** (lexical) | Client-side, no API | Free | ✅ Done |
-| **STAG** themed ad-group builder + Google Ads CSV | Cluster output | Free | ✅ Done |
+| **STAG** builder + Google **&** Microsoft Ads CSV | Cluster output | Free | ✅ Done |
 | Claude **Project starter** kit download | Static bundle | Free | ✅ Done |
 | Embeddings-based semantic clustering | Embeddings API ($) | Pro | Seam ready |
 | SERP-overlap clustering, competitor keywords | SERP API ($) | Pro | Planned |

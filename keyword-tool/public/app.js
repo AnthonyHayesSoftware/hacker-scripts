@@ -1,5 +1,5 @@
 import { clusterKeywords } from "./cluster.js";
-import { buildAdGroups, adGroupsToGoogleCSV } from "./stag.js";
+import { buildAdGroups, adGroupsToCSV } from "./stag.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -156,8 +156,9 @@ $("#stag-campaign").addEventListener("input", renderAdGroups);
 $("#stag-export").addEventListener("click", () => {
   const mts = selectedMatchTypes();
   if (!mts.length) return alert("Pick at least one match type.");
-  const csv = adGroupsToGoogleCSV(currentAdGroups(), mts);
-  triggerDownload(new Blob([csv], { type: "text/csv;charset=utf-8" }), `${slug(lastData.seed)}-adgroups.csv`);
+  const platform = $("#stag-platform").value;
+  const csv = adGroupsToCSV(platform, currentAdGroups(), mts);
+  triggerDownload(new Blob([csv], { type: "text/csv;charset=utf-8" }), `${slug(lastData.seed)}-${platform}-adgroups.csv`);
 });
 
 function liFor(suggestion, bucket) {
