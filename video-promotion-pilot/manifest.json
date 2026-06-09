@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Video Promotion Pilot",
+  "version": "0.12.1",
+  "description": "Grab a YouTube transcript and hand it to ChatGPT, Claude or Gemini pre-filled with a research prompt (summary, 25 key insights, checklist).",
+  "permissions": [
+    "tabs",
+    "scripting",
+    "storage",
+    "activeTab",
+    "clipboardWrite",
+    "sidePanel",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://m.youtube.com/*",
+    "https://scraper-api.decodo.com/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Video Promotion Pilot (open side panel)"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  }
+}

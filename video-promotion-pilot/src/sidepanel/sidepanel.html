@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Promotion Pilot</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Video Promotion Pilot</h1>
+      <button id="optionsBtn" class="link" title="Settings">⚙︎</button>
+    </header>
+
+    <section id="status" class="status loading">Looking for a video…</section>
+
+    <section id="videoCard" class="card hidden">
+      <div class="card-title">📄 Current Transcript</div>
+      <div class="meta">
+        <div><strong>Title:</strong> <span id="vTitle">—</span></div>
+        <div><strong>Channel:</strong> <span id="vChannel">—</span></div>
+        <div><strong>Video ID:</strong> <span id="vId">—</span></div>
+        <div><strong>Source:</strong> <span id="vSource">—</span></div>
+        <div><strong>Length:</strong> <span id="vLen">—</span> chars</div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <label class="field-label" for="promptSelect">Prompt / output:</label>
+      <select id="promptSelect"></select>
+
+      <label class="field-label" for="brandSelect">Brand (for infographics):</label>
+      <select id="brandSelect"></select>
+
+      <label class="field-label" for="ctaSelect">Call to action:</label>
+      <select id="ctaSelect"></select>
+
+      <label class="toggle">
+        <input type="checkbox" id="autoSubmit" />
+        <span>Auto-send the prompt (otherwise it just fills the box)</span>
+      </label>
+    </section>
+
+    <section class="ai-buttons">
+      <p class="ai-label">Open with the prompt pre-filled:</p>
+      <div class="btn-row">
+        <button class="ai-btn chatgpt" data-app="chatgpt" disabled>ChatGPT</button>
+        <button class="ai-btn claude" data-app="claude" disabled>Claude</button>
+        <button class="ai-btn gemini" data-app="gemini" disabled>Gemini</button>
+      </div>
+      <p id="hint" class="hint hidden">
+        Prompt copied to clipboard too — if the box isn't filled, just paste (Ctrl+V).
+      </p>
+    </section>
+
+    <details id="steerBox" class="steer">
+      <summary>Refine / steer the result</summary>
+      <p class="hint">
+        After the AI replies, copy a follow-up below and paste it into that same
+        chat to take the content further — the way a human editor would.
+      </p>
+      <div id="steerGrid" class="steer-grid"></div>
+      <textarea id="steerText" placeholder="Or write your own steer in your words…"></textarea>
+      <div class="btn-row">
+        <button id="steerCopy" class="steer-btn">Copy my steer</button>
+      </div>
+      <p id="steerHint" class="hint hidden"></p>
+    </details>
+
+    <footer>
+      <button id="retryBtn" class="link">↻ Re-fetch transcript</button>
+    </footer>
+
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>

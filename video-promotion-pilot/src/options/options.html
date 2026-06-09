@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video Promotion Pilot — Settings</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        max-width: 560px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #1f2a37;
+      }
+      h1 {
+        color: #4a8df0;
+        font-size: 22px;
+      }
+      p.muted {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin: 18px 0 6px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+      h2 {
+        font-size: 16px;
+        margin-top: 34px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 22px;
+      }
+      button {
+        background: #4a8df0;
+        color: #fff;
+        border: none;
+        padding: 11px 22px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #eef2f7;
+        color: #1f2a37;
+      }
+      button.danger {
+        background: transparent;
+        color: #b42318;
+        padding: 6px 10px;
+        font-weight: 600;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .row input[type="checkbox"] {
+        width: auto;
+      }
+      .row label {
+        margin: 0;
+      }
+      #saved {
+        color: #1d6b3a;
+        margin-left: 12px;
+        font-size: 14px;
+      }
+      .brand-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 4px 16px 16px;
+        margin-top: 16px;
+        background: #fcfcfd;
+      }
+      .brand-card .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .brand-card .card-head strong {
+        font-size: 14px;
+        color: #4a8df0;
+      }
+      .note {
+        background: #f9fafb;
+        border-left: 4px solid #4a8df0;
+        padding: 12px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #374151;
+        margin-top: 24px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Video Promotion Pilot — Settings</h1>
+    <p class="muted">
+      Transcripts are grabbed straight from the YouTube page (free, no setup).
+      Everything below is stored only in this browser profile.
+    </p>
+
+    <h2>Brand profiles</h2>
+    <p class="muted">
+      Create one profile per brand you publish for. Each can carry a written
+      <strong>style description</strong> and/or a <strong>Project URL</strong>
+      (a ChatGPT or Claude Project whose files already hold your brand identity).
+      Pick which one to use from the side panel before generating an infographic.
+    </p>
+    <p class="muted">
+      <strong>Tip for clients:</strong> generate a sample infographic in ChatGPT,
+      then ask ChatGPT to "write a reusable brand style description from this
+      image" and paste it below — or save it into a ChatGPT Project and paste the
+      Project's URL instead. If you set a Project URL, leave the description blank
+      and the project handles the look. With no Project URL, the description is
+      injected and you can attach a sample image in the chat yourself.
+    </p>
+
+    <div id="brandList"></div>
+    <div class="row">
+      <button id="addBrand" class="secondary" type="button">+ Add brand</button>
+    </div>
+
+    <h2>Call-to-action snippets</h2>
+    <p class="muted">
+      Save the CTAs you reuse (in your own words) — a workshop, a lead magnet, a
+      newsletter signup. Pick one from the side panel and it's woven into the
+      close of the content you generate. You can switch CTA per generation.
+    </p>
+    <div id="ctaList"></div>
+    <div class="row">
+      <button id="addCta" class="secondary" type="button">+ Add CTA</button>
+    </div>
+
+    <h2>AI app destinations (defaults)</h2>
+    <p class="muted">
+      Fallback targets used when a brand has no Project URL for that app. Leave
+      blank to use the public defaults.
+    </p>
+
+    <label for="urlChatgpt">ChatGPT URL</label>
+    <input id="urlChatgpt" type="text" autocomplete="off" placeholder="https://chatgpt.com/  (or a default ChatGPT Project URL)" />
+
+    <label for="urlClaude">Claude URL</label>
+    <input id="urlClaude" type="text" autocomplete="off" placeholder="https://claude.ai/new  (or a default Claude Project URL)" />
+
+    <label for="urlGemini">Gemini URL</label>
+    <input id="urlGemini" type="text" autocomplete="off" placeholder="https://gemini.google.com/app" />
+
+    <h2>Decodo fallback (advanced, off by default)</h2>
+    <p class="muted">
+      An optional paid transcript API used only if in-page extraction fails. Left
+      off for most users — the in-page method covers captioned videos.
+    </p>
+    <div class="row">
+      <input id="decodoEnabled" type="checkbox" />
+      <label for="decodoEnabled">Enable Decodo fallback</label>
+    </div>
+
+    <label for="user">Decodo username</label>
+    <input id="user" type="text" autocomplete="off" placeholder="from your Decodo dashboard" />
+
+    <label for="pass">Decodo password</label>
+    <input id="pass" type="password" autocomplete="off" placeholder="from your Decodo dashboard" />
+
+    <h2>Saved transcripts</h2>
+    <p class="muted">
+      Transcripts are cached per video so switching tabs is instant. Clear them to
+      force a fresh grab (this also happens automatically on every update).
+    </p>
+    <div class="row">
+      <button id="clearCache" class="secondary" type="button">Clear saved transcripts</button>
+      <span id="cacheCleared" style="color: #1d6b3a; font-size: 14px"></span>
+    </div>
+
+    <h2>Backup &amp; restore</h2>
+    <p class="muted">
+      Loading a fresh unzipped build is a <em>new</em> extension to Chrome, so it
+      starts with empty settings. <strong>Export</strong> your brand profiles,
+      CTAs and URLs to a file, then <strong>Import</strong> it into any future
+      build (or another machine) to get everything back in one click. Tip: export
+      again whenever you change something, and keep the file somewhere safe.
+    </p>
+    <div class="row">
+      <button id="exportBtn" class="secondary" type="button">Export settings…</button>
+      <button id="importBtn" class="secondary" type="button">Import settings…</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden />
+      <span id="backupMsg" style="color: #1d6b3a; font-size: 14px"></span>
+    </div>
+
+    <div class="row">
+      <button id="save" type="button">Save</button>
+      <span id="saved"></span>
+    </div>
+
+    <div class="note">
+      Everything here is stored in <code>chrome.storage.sync</code> on this
+      browser profile only — never committed to a repo or sent anywhere except
+      the services you point it at.
+    </div>
+
+    <template id="ctaTemplate">
+      <div class="brand-card">
+        <div class="card-head">
+          <strong>CTA</strong>
+          <button class="danger remove" type="button">Remove</button>
+        </div>
+        <label>Name</label>
+        <input class="c-name" type="text" autocomplete="off" placeholder="e.g. Curated Traffic Workshop" />
+        <label>CTA text (your words — the offer and the nudge)</label>
+        <textarea class="c-text" placeholder="e.g. Join my Curated Traffic Workshop — I walk through the whole system from blog posts to stat-post tools and curated content."></textarea>
+        <label>Destination URL (optional)</label>
+        <input class="c-url" type="text" autocomplete="off" placeholder="https://example.com/workshop" />
+      </div>
+    </template>
+
+    <template id="brandTemplate">
+      <div class="brand-card">
+        <div class="card-head">
+          <strong>Brand</strong>
+          <button class="danger remove" type="button">Remove</button>
+        </div>
+        <label>Name</label>
+        <input class="b-name" type="text" autocomplete="off" placeholder="e.g. Men50 Fitness" />
+        <label>Brand &amp; design style description — for infographics (optional if a Project URL is set)</label>
+        <textarea class="b-desc" placeholder="Colours (hex), fonts, character/illustration style, icon style, footer CTA, sticky-note text, overall look…"></textarea>
+        <label>Writing / newsletter voice — for written content (optional)</label>
+        <textarea class="b-voice" placeholder="How this brand writes: greeting, tone, signature phrases, structure, sign-off. Leave blank for a neutral default."></textarea>
+        <label>ChatGPT Project URL (optional)</label>
+        <input class="b-chatgpt" type="text" autocomplete="off" placeholder="https://chatgpt.com/g/…  or your Project's new-chat URL" />
+        <label>Claude Project URL (optional)</label>
+        <input class="b-claude" type="text" autocomplete="off" placeholder="https://claude.ai/project/…" />
+        <label>Gemini URL (optional)</label>
+        <input class="b-gemini" type="text" autocomplete="off" placeholder="https://gemini.google.com/app" />
+      </div>
+    </template>
+
+    <script src="options.js"></script>
+  </body>
+</html>
